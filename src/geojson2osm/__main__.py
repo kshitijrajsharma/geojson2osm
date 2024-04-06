@@ -1,6 +1,6 @@
 import json
 import sys
-from geojson2osm import geojson2osm
+from geojson2osm import geojson2osm as g2o
 
 
 def main() -> None:
@@ -9,13 +9,13 @@ def main() -> None:
     geojson_data = json.load(open(input))
 
     # Convert the GeoJSON data to OSM XML format
-    osm_xml = geojson2osm(geojson_data)
+    osm_xml = g2o(geojson_data)
 
     # Save the OSM XML data to a file
     output = sys.argv[2]
     with open(output, 'w') as output_file:
         output_file.write(osm_xml)
-    
+
 
 if __name__ == '__main__':
     main()
