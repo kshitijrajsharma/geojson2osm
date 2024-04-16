@@ -1,7 +1,8 @@
 import re
-from geojson2osm import geojson2osm
+from geojson2osm import geojson2osm as g2o
 
-def test_basic_conversion():
+
+def test_basic_conversion() -> None:
     geojson_data = {
         "type": "FeatureCollection",
         "features": [
@@ -24,7 +25,7 @@ def test_basic_conversion():
         ],
     }
 
-    osm_xml = geojson2osm(geojson_data)
+    osm_xml = g2o(geojson_data)
     assert '<osm version="0.6" generator="geojson2osm">' in osm_xml
     assert '<tag k="building" v="yes" />' in osm_xml
 
@@ -38,4 +39,3 @@ def test_basic_conversion():
     nd_pattern = re.compile(r'<nd ref="(-\d+)" />')
     nd_matches = nd_pattern.findall(way_content)
     assert nd_matches[0] == nd_matches[-1]
-
