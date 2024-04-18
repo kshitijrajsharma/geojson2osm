@@ -41,6 +41,9 @@ def geojson2osm(geojson: dict) -> str:
 
     for feature in features:
         properties = feature.get("properties", {})
+        for key in properties.keys():
+            properties[key] = str(properties[key])
+
         geometry = feature.get("geometry", feature)
 
         if geometry["type"] == "Point":
@@ -149,11 +152,8 @@ def process_line_string(coordinates: list, properties: dict, ways: list,
             node = Node(point, {})
             nodes.append(node)
             nodes_index[node_hash] = node
-            way.nodes.append(node)
 
-    # Close the way if it's not already closed
-    if coordinates[0] == coordinates[-1]:
-        way.nodes.append(way.nodes[0])
+        way.nodes.append(nodes_index[node_hash])
 
 
 def process_multi_polygon(coordinates: list, properties: dict,
@@ -168,8 +168,9 @@ def process_multi_polygon(coordinates: list, properties: dict,
     relation = Relation(properties)
     relation.tags["type"] = "multipolygon"
     relations.append(relation)
-
+    i = -1
     for polygon in coordinates:
+        i += 1
         for index, ring in enumerate(polygon):
             way = Way({})
             ways.append(way)
@@ -187,7 +188,10 @@ def process_multi_polygon(coordinates: list, properties: dict,
                     node = Node(point, {})
                     nodes.append(node)
                     nodes_index[node_hash] = node
-                    way.nodes.append(node)
 
-            if ring[0] == ring[-1]:
+                way.nodes.append(nodes_index[node_hash])
+
+            # Check if the original ring is "closed". If not
+            # append the first node to the end.
+            if ring[0] != ring[-1]:
                 way.nodes.append(way.nodes[0])
