@@ -41,6 +41,9 @@ def geojson2osm(geojson: dict) -> str:
 
     for feature in features:
         properties = feature.get("properties", {})
+        for key in properties.keys():
+            properties[key] = str(properties[key])
+
         geometry = feature.get("geometry", feature)
 
         if geometry["type"] == "Point":
